@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-ui.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-exports.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-stock.min.js"></script>
+    <script src="https://cdn.anychart.com/releases/v8/js/anychart-data-adapter.min.js"></script>
+    <link
+      href="https://cdn.anychart.com/releases/v8/css/anychart-ui.min.css"
+      type="text/css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.anychart.com/releases/v8/fonts/css/anychart-font.min.css"
+      type="text/css"
+      rel="stylesheet"
+    />
+    <style type="text/css">
+      html,
+      body,
+      #container {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script>
+      anychart.onDocumentReady(function () {
+        // The data used in this sample can be obtained from the CDN
+        // https://cdn.anychart.com/csv-data/csco-daily.csv
+        anychart.data.loadCsvFile(
+          "https://cdn.anychart.com/csv-data/csco-daily.csv",
+          function (data) {
+            // create data table on loaded data
+            var dataTable = anychart.data.table();
+            dataTable.addData(data);
+
+            // map loaded data for the ohlc series
+            var mapping = dataTable.mapAs();
+            mapping.addField("open", 1, "first");
+            mapping.addField("high", 2, "max");
+            mapping.addField("low", 3, "min");
+            mapping.addField("close", 4, "last");
+            mapping.addField("value", 4, "close");
+
+            // create stock chart
+            var chart = anychart.stock();
+            // setting chart padding to fit both Y axes
+            chart.padding(10, 50, 20, 50);
+
+            // create first plot on the chart
+            var plot = chart.plot(0);
+            // adding extra Y axis to the right side
+            plot.yAxis(1).orientation("right");
+
+            // create line series
+            plot.ohlc(mapping).name("CSCO");
+
+            // create first plot on the chart
+            var secondPlot = chart.plot(1);
+            secondPlot.height("30%");
+            secondPlot.yAxis(1).orientation("right");
+
+            // create RSI indicator with period 14
+            var rsi = secondPlot.rsi(mapping, 14).series();
+            rsi.stroke("#64b5f6");
+
+            // create scroller series with mapped data
+            chart.scroller().line(mapping);
+            // set container id for the chart
+            chart.container("container");
+            // initiate chart drawing
+            chart.draw();
+
+            // create range picker
+            var rangePicker = anychart.ui.rangePicker();
+            // init range picker
+            rangePicker.render(chart);
+
+            // create range selector
+            var rangeSelector = anychart.ui.rangeSelector();
+            // init range selector
+            rangeSelector.render(chart);
+          }
+        );
+      });
+    </script>
+  </body>
+</html>
