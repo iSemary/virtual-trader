@@ -33,7 +33,7 @@
         // The data used in this sample can be obtained from the CDN
         // https://cdn.anychart.com/csv-data/csco-daily.csv
         anychart.data.loadCsvFile(
-          "https://cdn.anychart.com/csv-data/csco-daily.csv",
+          "test.csv",
           function (data) {
             // create data table on loaded data
             var dataTable = anychart.data.table();
